@@ -1,5 +1,6 @@
 package com.xiaosong.ae.security;
 
+import com.xiaosong.ae.filter.VerifyFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -53,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 // 如果有允许匿名的url，填在下面
-//                .antMatchers().permitAll()
+                .antMatchers("/getVerifyCode").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 // 设置登陆页
@@ -66,6 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .usernameParameter("username")
 //                .passwordParameter("password")
                 .and()
+                .addFilterBefore(new VerifyFilter(), UsernamePasswordAuthenticationFilter.class)
                 .logout().permitAll()
                 // 自动登录
                 .and()
